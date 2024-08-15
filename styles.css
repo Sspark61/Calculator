@@ -10,14 +10,14 @@
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
-  gap: 160px;
+  gap: 140px;
 }
 
 .calc {
   display: flex;
   flex-direction: column;
   padding: 40px;
-  border: black 1px solid;
+  border: black 2px solid;
   gap: 20px;
   background-color: #aaaaaa;
   border-radius: 5%;
@@ -71,7 +71,7 @@ button {
   border: none;
   border-radius: 8px;
   width: 100px;
-  height: 45px;
+  height: 55px;
   transition: 0.3s;
   outline: 1px black solid;
 }
@@ -102,6 +102,13 @@ button:active {
 }
 
 #operator:hover {
+  background-color: #0d463a;
+  box-shadow: 0 0 0 5px #126255;
+  color: #fff;
+  outline: none;
+}
+
+#equal:hover {
   background-color: #0d463a;
   box-shadow: 0 0 0 5px #126255;
   color: #fff;
