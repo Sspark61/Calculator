@@ -8,6 +8,7 @@ let ops = document.querySelectorAll("#operator");
 let allclear = document.querySelector("#clear");
 let equal = document.querySelector("#equal");
 let dot = document.querySelector("#dot");
+let operror = true;
 let point = true;
 
 function add(dgt1, dgt2) {
@@ -35,15 +36,17 @@ function operate(str) {
     if (str[i] === "x") {
       let left = i - 1,
         right = i + 1,
-        val1 = 0,
-        val2 = 0,
-        factor = 1;
+        val1,
+        val2,
+        temp1 = "",
+        temp2 = "";
 
       while (str[left] !== "+" && str[left] !== "-" && left !== -1) {
-        val1 += str[left] * factor;
-        factor *= 10;
         left--;
       }
+      temp1 = str.substring(left + 1, i);
+      val1 = Number(temp1);
+
       while (
         str[right] !== "+" &&
         str[right] !== "-" &&
@@ -51,26 +54,29 @@ function operate(str) {
         str[right] !== "x" &&
         right !== str.length
       ) {
-        val2 += str[right] * 1;
-        val2 *= 10;
         right++;
       }
-      val2 /= 10;
+      temp2 = str.substring(i + 1, right);
+      val2 = Number(temp2);
+
       let ans = mult(val1, val2);
+      str = str.replace(`${temp1}`, `${val1}`);
+      str = str.replace(`${temp2}`, `${val2}`);
       str = str.replace(`${val1}x${val2}`, `${ans}`);
       i = 0;
     } else if (str[i] === "/") {
       let left = i - 1,
-        right = i + 1;
-      let val1 = 0,
-        val2 = 0,
-        factor = 1;
+        right = i + 1,
+        val1 = "",
+        val2 = "",
+        temp1 = "",
+        temp2 = "";
 
       while (str[left] !== "+" && str[left] !== "-" && left !== -1) {
-        val1 += str[left] * factor;
-        factor *= 10;
         left--;
       }
+      temp1 = str.substring(left + 1, i);
+      val1 = Number(temp1);
 
       while (
         str[right] !== "+" &&
@@ -79,66 +85,72 @@ function operate(str) {
         str[right] !== "/" &&
         right !== str.length
       ) {
-        val2 += str[right] * 1;
-        val2 *= 10;
         right++;
       }
-      val2 /= 10;
+      temp2 = str.substring(i + 1, right);
+      val2 = Number(temp2);
+      if (val2 === 0) {
+        return "undefined";
+      }
+
       let ans = divide(val1, val2);
+      str = str.replace(`${temp1}`, `${val1}`);
+      str = str.replace(`${temp2}`, `${val2}`);
       str = str.replace(`${val1}/${val2}`, `${ans}`);
       i = 0;
     }
   }
-  console.log(str);
   for (let i = 0; i < str.length; i++) {
     if (str[i] === "+") {
       let left = i - 1,
-        right = i + 1;
-      let val1 = 0,
-        val2 = 0,
-        factor = 1;
+        right = i + 1,
+        val1 = "",
+        val2 = "",
+        temp1 = "",
+        temp2 = "";
 
       while (left !== -1) {
-        val1 += str[left] * factor;
-        factor *= 10;
         left--;
       }
-      console.log(val1);
+      temp1 = str.substring(left + 1, i);
+      val1 = Number(temp1);
+
       while (str[right] !== "+" && str[right] !== "-" && right !== str.length) {
-        val2 += str[right] * 1;
-        val2 *= 10;
         right++;
       }
-      val2 /= 10;
-      console.log(val2);
+      temp2 = str.substring(i + 1, right);
+      val2 = Number(temp2);
+
       let ans = add(val1, val2);
+      str = str.replace(`${temp1}`, `${val1}`);
+      str = str.replace(`${temp2}`, `${val2}`);
       str = str.replace(`${val1}+${val2}`, `${ans}`);
       i = 0;
-      console.log(str);
     } else if (str[i] === "-") {
       let left = i - 1,
-        right = i + 1;
-      let val1 = 0,
-        val2 = 0,
-        factor = 1;
+        right = i + 1,
+        val1 = "",
+        val2 = "",
+        temp1 = "",
+        temp2 = "";
 
       while (left !== -1) {
-        val1 += str[left] * factor;
-        factor *= 10;
         left--;
       }
-      console.log(val1);
+      temp1 = str.substring(left + 1, i);
+      val1 = Number(temp1);
+
       while (str[right] !== "+" && str[right] !== "-" && right !== str.length) {
-        val2 += str[right] * 1;
-        val2 *= 10;
         right++;
       }
-      val2 /= 10;
-      console.log(val2);
+      temp2 = str.substring(i + 1, right);
+      val2 = Number(temp2);
+
       let ans = subtract(val1, val2);
+      str = str.replace(`${temp1}`, `${val1}`);
+      str = str.replace(`${temp2}`, `${val2}`);
       str = str.replace(`${val1}-${val2}`, `${ans}`);
       i = 0;
-      console.log(str);
     }
   }
   return str;
@@ -150,6 +162,7 @@ allclear.addEventListener("click", () => {
   display.innerHTML = equation;
   result.innerHTML = total;
   point = true;
+  operror = true;
 });
 
 backspace.addEventListener("click", () => {
@@ -161,6 +174,7 @@ digits.forEach((digit) => {
   digit.addEventListener("click", () => {
     equation += digit.innerHTML;
     display.innerHTML = equation;
+    operror = true;
   });
 });
 
@@ -174,19 +188,28 @@ dot.addEventListener("click", () => {
 
 ops.forEach((op) => {
   op.addEventListener("click", () => {
-    equation += op.innerHTML;
-    display.innerHTML = equation;
-    point = true;
+    if (operror) {
+      equation += op.innerHTML;
+      display.innerHTML = equation;
+      point = true;
+      operror = false;
+    }
   });
 });
 
 equal.addEventListener("click", () => {
   let ans = operate(equation);
-  ans = Number(ans);
-  if (ans === Math.floor(ans)) {
+  if (ans === "undefined") {
     result.innerHTML = ans;
+    operror = false;
   } else {
-    result.innerHTML = ans.toFixed(6);
+    ans = Number(ans);
+    if (ans === Math.floor(ans)) {
+      result.innerHTML = ans;
+    } else {
+      result.innerHTML = ans.toFixed(6);
+    }
   }
   point = true;
+  equation = result.innerHTML;
 });
